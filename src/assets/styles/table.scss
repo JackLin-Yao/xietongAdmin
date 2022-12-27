@@ -6,7 +6,9 @@
 
 @media print {
 table {
-   
+    // page-break-inside: avoid;
+    // page-break-after: avoid;
+    // page-break-before: avoid;
     background-color: #cccccc;
     margin-top: 10px;
     border-collapse: collapse;
@@ -30,6 +32,7 @@ table {
     }
 
     tr {
+      // page-break-inside: avoid;
       border: 1px solid;
       line-height: 23px;
     }
@@ -62,8 +65,8 @@ table {
     margin-top: 0px;
   // style="page-break-before:always; page-break-after: always"
   .el-table__row{
-    page-break-before: always;
-    page-break-after: always
+    // page-break-before: always;
+    // page-break-after: always
   }
   }
 }

@@ -3,7 +3,7 @@ import router, { constantRoutes, dynamicRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
 import ParentView from '@/components/ParentView'
-import InnerLink from '@/layout/components/InnerLink'
+
 
 // 匹配views里面所有的.vue文件
 const modules = import.meta.glob('./../../views/**/*.vue')
@@ -12,10 +12,10 @@ const usePermissionStore = defineStore(
   'permission',
   {
     state: () => ({
-      routes: [],
-      addRoutes: [],
+      routes: [],  //完整路由表
+      addRoutes: [],//用户可访问路由表
       defaultRoutes: [],
-      topbarRouters: [],
+      // topbarRouters: [],
       sidebarRouters: []
     }),
     actions: {
@@ -26,9 +26,9 @@ const usePermissionStore = defineStore(
       setDefaultRoutes(routes) {
         this.defaultRoutes = constantRoutes.concat(routes)
       },
-      setTopbarRoutes(routes) {
-        this.topbarRouters = routes
-      },
+      // setTopbarRoutes(routes) {
+      //   this.topbarRouters = routes
+      // },
       setSidebarRouters(routes) {
         this.sidebarRouters = routes
       },
@@ -36,21 +36,27 @@ const usePermissionStore = defineStore(
         return new Promise(resolve => {
           // 向后端请求路由数据
           getRouters().then(res => {
-            // console.log("🚀 ~ file: permission.js:39 ~ getRouters ~ res", res.data)
+            console.log("🚀 ~ file: permission.js:39 ~ getRouters ~ res", res.data)
             const sdata = JSON.parse(JSON.stringify(res.data))
             // console.log("🚀 ~ file: permission.js:41 ~ getRouters ~ sdata", sdata)
             const rdata = JSON.parse(JSON.stringify(res.data))
             // console.log("🚀 ~ file: permission.js:43 ~ getRouters ~ rdata", rdata)
             const defaultData = JSON.parse(JSON.stringify(res.data))
+            // console.log("🚀 ~ file: permission.js:45 ~ getRouters ~ defaultData", defaultData)
             const sidebarRoutes = filterAsyncRouter(sdata)
             const rewriteRoutes = filterAsyncRouter(rdata, false, true)
+            // console.log("🚀 ~ file: permission.js:48 ~ getRouters ~ rewriteRoutes", rewriteRoutes)/
+            // 后台传过来的动态路由
             const defaultRoutes = filterAsyncRouter(defaultData)
+            console.log("🚀 ~ file: permission.js:48 ~ getRouters ~ defaultRoutes", defaultRoutes)
+            // router文件下的动态路由
             const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
+            console.log("🚀 ~ file: permission.js:49 ~ getRouters ~ asyncRoutes", asyncRoutes)
             asyncRoutes.forEach(route => { router.addRoute(route) })
             this.setRoutes(rewriteRoutes)
             this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
             this.setDefaultRoutes(sidebarRoutes)
-            this.setTopbarRoutes(defaultRoutes)
+            // this.setTopbarRoutes(defaultRoutes)
             resolve(rewriteRoutes)
           })
         })
@@ -58,8 +64,16 @@ const usePermissionStore = defineStore(
     }
   })
 
-// 遍历后台传来的路由字符串，转换为组件对象
+// 遍历后台传来的路由字符串，转换为组件对象   
+/**
+ * 筛选动态路由
+ *
+ * @param routers 动态路由配置
+ * @param permissions 权限实体数组
+ * @returns 筛选后的路由配置数组
+ */
 function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
+
   return asyncRouterMap.filter(route => {
     if (type && route.children) {
       route.children = filterChildren(route.children)
@@ -70,8 +84,6 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
         route.component = Layout
       } else if (route.component === 'ParentView') {
         route.component = ParentView
-      } else if (route.component === 'InnerLink') {
-        route.component = InnerLink
       } else {
         route.component = loadView(route.component)
       }

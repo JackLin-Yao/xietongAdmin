@@ -7,37 +7,68 @@
       <el-form ref="loginRef" :model="loginForm" :rules="loginRules">
         <h3 class="title">协同管理系统</h3>
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
-            <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
+          <el-input
+            v-model="loginForm.username"
+            type="text"
+            size="large"
+            auto-complete="off"
+            placeholder="账号"
+          >
+            <template #prefix
+              ><svg-icon icon-class="user" class="el-input__icon input-icon"
+            /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="密码"
-            @keyup.enter="handleLogin">
-            <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
+          <el-input
+            show-password
+            v-model="loginForm.password"
+            type="password"
+            size="large"
+            auto-complete="off"
+            placeholder="密码"
+            @keyup.enter="handleLogin"
+          >
+            <template #prefix
+              ><svg-icon icon-class="password" class="el-input__icon input-icon"
+            /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="code" v-if="captchaEnabled">
-          <div class="verify"><el-input v-model="loginForm.code" size="large" auto-complete="off" placeholder="验证码"
-              style="width: 242px" @keyup.enter="handleLogin">
-              <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
+          <div class="verify">
+            <el-input
+              v-model="loginForm.code"
+              size="large"
+              auto-complete="off"
+              placeholder="验证码"
+              style="width: 242px"
+              @keyup.enter="handleLogin"
+            >
+              <template #prefix
+                ><svg-icon icon-class="validCode" class="el-input__icon input-icon"
+              /></template>
             </el-input>
             <div class="login-code">
               <img :src="codeUrl" @click="getCode" class="login-code-img" />
             </div>
           </div>
-
         </el-form-item>
         <div class="rememberpwd">
           <el-checkbox v-model="loginForm.rememberMe" style="">记住密码</el-checkbox>
         </div>
 
-        <el-form-item style="width:100%;">
-          <el-button :loading="loading" size="large" type="primary" style="width:100%;" @click.prevent="handleLogin">
+        <el-form-item style="width: 100%">
+          <el-button
+            :loading="loading"
+            size="large"
+            type="primary"
+            style="width: 100%"
+            @click.prevent="handleLogin"
+          >
             <span v-if="!loading">登 录</span>
             <span v-else>登 录 中...</span>
           </el-button>
-          <div style="float: right;" v-if="register">
+          <div style="float: right" v-if="register">
             <router-link class="link-type" :to="'/register'">立即注册</router-link>
           </div>
         </el-form-item>
@@ -55,9 +86,9 @@
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
-import useUserStore from '@/store/modules/user'
+import useUserStore from "@/store/modules/user";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 
@@ -66,13 +97,13 @@ const loginForm = ref({
   password: "admin123",
   rememberMe: false,
   code: "",
-  uuid: ""
+  uuid: "",
 });
 
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  code: [{ required: true, trigger: "change", message: "请输入验证码" }]
+  code: [{ required: true, trigger: "change", message: "请输入验证码" }],
 };
 
 const codeUrl = ref("");
@@ -82,9 +113,9 @@ const captchaEnabled = ref(true);
 // 注册开关
 const register = ref(false);
 const redirect = ref(undefined);
-
+// console.log(VUE_APP_BASE_API);
 function handleLogin() {
-  proxy.$refs.loginRef.validate(valid => {
+  proxy.$refs.loginRef.validate((valid) => {
     if (valid) {
       loading.value = true;
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
@@ -99,21 +130,24 @@ function handleLogin() {
         Cookies.remove("rememberMe");
       }
       // 调用action的登录方法
-      userStore.login(loginForm.value).then(() => {
-        router.push({ path: redirect.value || "/" });
-      }).catch(() => {
-        loading.value = false;
-        // 重新获取验证码
-        if (captchaEnabled.value) {
-          getCode();
-        }
-      });
+      userStore
+        .login(loginForm.value)
+        .then(() => {
+          router.push({ path: redirect.value || "/" });
+        })
+        .catch(() => {
+          loading.value = false;
+          // 重新获取验证码
+          if (captchaEnabled.value) {
+            getCode();
+          }
+        });
     }
   });
 }
 
 function getCode() {
-  getCodeImg().then(res => {
+  getCodeImg().then((res) => {
     captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled;
     if (captchaEnabled.value) {
       codeUrl.value = "data:image/gif;base64," + res.img;
@@ -129,7 +163,7 @@ function getCookie() {
   loginForm.value = {
     username: username === undefined ? loginForm.value.username : username,
     password: password === undefined ? loginForm.value.password : decrypt(password),
-    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 }
 
@@ -137,7 +171,7 @@ getCode();
 getCookie();
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .login {
   display: flex;
   justify-content: space-around;
@@ -161,7 +195,6 @@ getCookie();
   box-sizing: border-box;
   // padding-top: 25px;
 
-
   .el-form {
     display: flex;
     flex-direction: column;
@@ -184,8 +217,6 @@ getCookie();
       justify-content: space-between;
       width: 350px;
 
-
-
       input {
         background-color: #aaa6a6;
       }
@@ -194,7 +225,6 @@ getCookie();
         display: block;
         width: 100px;
       }
-
     }
   }
 
@@ -204,7 +234,6 @@ getCookie();
     width: 100%;
     margin-left: 35px;
   }
-
 
   .el-input {
     width: 350px;

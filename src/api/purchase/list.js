@@ -29,3 +29,29 @@ export function postDeliverGoods(params) {
 
   })
 }
+
+export function deliverGoodsList(params, status = '') {
+  return request({
+    url: `/purchase/delivery/list/${status}`,
+    method: 'get',
+    data: params
+  })
+}
+
+
+export function deliverGoodsDetail(id) {
+  return request({
+    url: `/purchase/delivery/${id}`,
+    method: 'get',
+    // data: params
+  })
+}
+
+
+export function deliverGoodsCommit(params) {
+  return request({
+    url: `/purchase/delivery/receive`,
+    method: 'post',
+    data: params
+  })
+}

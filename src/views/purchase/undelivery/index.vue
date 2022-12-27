@@ -1,95 +1,90 @@
-<script setup >
-import { getPurchaseList, getPurchaseNumber } from '@/api/purchase/list';
-import Table from '@/components/table/index.vue';
-import { reactive, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
-const router = useRouter()
-const route = useRoute()
-const tableData = ref([])
-const loading = ref(false)
-const dialogVisible = ref(false)
-let totalNum = ref(null)
-let pageNum = ref('1')
-let pageSize = ref('20')
+<script setup>
+import { getPurchaseList, getPurchaseNumber } from "@/api/purchase/list";
+import Table from "@/components/table/index.vue";
+import { reactive, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
+const router = useRouter();
+const route = useRoute();
+const tableData = ref([]);
+const loading = ref(false);
+const dialogVisible = ref(false);
+let totalNum = ref(null);
+let pageNum = ref("1");
+let pageSize = ref("20");
 let options = [
   {
     label: "采购单号",
-    prop: 'poNum',
-    align: 'center',
-    slot: 'purchaseNumber',
+    prop: "poNum",
+    align: "center",
+    slot: "purchaseNumber",
     // width: 120
   },
   {
     label: "物料",
     // prop: 'left',
-    slot: 'item',
-    align: 'left',
+    slot: "item",
+    align: "left",
     // width: 200
-
   },
   {
     label: "物料规格",
-    prop: 'itemDesc',
-    align: 'center',
+    prop: "itemDesc",
+    align: "center",
   },
   {
     label: "供应商",
-    prop: 'name',
-    align: 'center',
+    prop: "name",
+    align: "center",
     width: 300,
-    slot: 'name'
+    slot: "name",
   },
   {
     label: "供应商编码",
-    prop: 'vendNum',
-    align: 'center'
+    prop: "vendNum",
+    align: "center",
   },
 
   {
     label: "操作",
     action: true,
-    align: 'center'
-  }
-]
-
-
-
+    align: "center",
+  },
+];
 
 const getPurchaseUndeliveryList = async (params) => {
   loading.value = true;
-  await getPurchaseList({ params, pageNum: pageNum.value, pageSize: pageSize.value }).then((result) => {
-    tableData.value = result.rows
-    totalNum.value = result.total
-    ElMessage.success('`搜索成功`')
-  }).finally(() => {
-    loading.value = false
-  });
-}
+  await getPurchaseList({ params, pageNum: pageNum.value, pageSize: pageSize.value })
+    .then((result) => {
+      tableData.value = result.rows;
+      totalNum.value = result.total;
+      ElMessage.success("加载成功");
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
-getPurchaseUndeliveryList()
-
+getPurchaseUndeliveryList();
 
 const handleClick = (tab, event) => {
   // paneName
 
   if (tab.paneName == "0") {
-    getPurchaseUndeliveryList()
+    getPurchaseUndeliveryList();
   } else if (tab.paneName == "1") {
-    alert(2) //此处写逻辑
+    alert(2); //此处写逻辑
   } else if (tab.paneName == "2") {
-    alert(3) //此处写逻辑
+    alert(3); //此处写逻辑
   }
-}
+};
 
-const queryParams = ref('')
-
-
+const queryParams = ref("");
 </script>
 
 <template>
   <div class="undelivery">
-    <el-card shadow="always" :body-style="{ padding: '20px' }" style="margin-bottom: 3px;">
+    <el-card shadow="always" :body-style="{ padding: '20px' }" style="margin-bottom: 3px">
       <!-- <el-form :inline="true" :model="queryParams" class="demo-form-inline"> -->
       <el-input size="default" v-model="queryParams" placeholder="请输入搜索内容" style="max-width: 180px">
       </el-input>
@@ -100,7 +95,6 @@ const queryParams = ref('')
         查询
       </el-button>
       <!-- </el-form> -->
-
     </el-card>
 
     <el-tabs class="demo-tabs" type="border-card" @tab-click="handleClick">
@@ -123,8 +117,10 @@ const queryParams = ref('')
           </template>
 
           <template template #purchaseNumber="{ scope }">
-            <el-link type="primary"> <router-link :to="'poNum/' + scope.row.poNum">{{ scope.row.poNum
-            }}</router-link></el-link>
+            <el-link type="primary">
+              <router-link :to="'poNum/' + scope.row.poNum">{{
+                  scope.row.poNum
+              }}</router-link></el-link>
           </template>
           <template #item="{ scope }">
             <div>
@@ -135,7 +131,6 @@ const queryParams = ref('')
               <span>物料说明：</span><br />
               <span>{{ scope.row.description }}</span>
             </div>
-
           </template>
         </Table>
       </el-tab-pane>
@@ -147,19 +142,16 @@ const queryParams = ref('')
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="dialogVisible = false">
-            Confirm
-          </el-button>
+          <el-button type="primary" @click="dialogVisible = false"> Confirm </el-button>
         </span>
       </template>
     </el-dialog>
-
   </div>
 </template>
 
 <style scoped lang="scss">
 .undelivery {
-  padding: 8px
+  padding: 8px;
 }
 
 .demo-tabs>.el-tabs__content {

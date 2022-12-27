@@ -47,6 +47,20 @@ import print from 'vue3-print-nb'
 
 const app = createApp(App)
 
+
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+
+function useTable(app) {
+  app.use(VXETable)
+
+  // 给 vue 实例挂载内部对象，例如：
+  // app.config.globalProperties.$XModal = VXETable.modal
+  // app.config.globalProperties.$XPrint = VXETable.print
+  // app.config.globalProperties.$XSaveFile = VXETable.saveFile
+  // app.config.globalProperties.$XReadFile = VXETable.readFile
+}
+
 // 全局方法挂载
 app.config.globalProperties.useDict = useDict
 app.config.globalProperties.download = download
@@ -70,7 +84,7 @@ app.use(router)
 app.use(store)
 app.use(plugins)
 app.use(elementIcons)
-app.use(print)
+app.use(print).use(useTable)
 app.component('svg-icon', SvgIcon)
 
 directive(app)

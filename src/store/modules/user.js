@@ -34,6 +34,7 @@ const useUserStore = defineStore(
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
             const user = res.user
+            console.log(import.meta.env.VITE_APP_BASE_API, 'avatar')
             const avatar = (user.avatar == "" || user.avatar == null) ? defAva : import.meta.env.VITE_APP_BASE_API + user.avatar;
 
             if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组

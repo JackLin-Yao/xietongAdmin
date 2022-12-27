@@ -182,8 +182,22 @@ export const dynamicRoutes = [
       {
         path: 'poNum/:poNum',
         component: () => import('@/views/purchase/undelivery/poNumDetaile'),
-        name: 'GenEdit',
+        name: 'poNumEdit',
         meta: { title: '采购订单明细', activeMenu: '/purchase/undelivery' }
+      }
+    ]
+  },
+  {
+    path: '/purchase',
+    component: Layout,
+    hidden: true,
+    permissions: ['purchase:delivery:query'],
+    children: [
+      {
+        path: 'delivery/:id',
+        component: () => import('@/views/purchase/delivery/deliverGoodsDetail.vue'),
+        name: 'deliveryGoodsEdit',
+        meta: { title: '送货订单明细', activeMenu: '/purchase/delivery' }
       }
     ]
   }
